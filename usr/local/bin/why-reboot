@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+# Checks to see if reboot is required,
+# and if so, which packages require the reboot.
+#
+
+if [ -e /var/run/reboot-required.pkgs ]
+then
+  cat /var/run/reboot-required.pkgs
+else
+  echo 'No reboot required.'
+fi
+

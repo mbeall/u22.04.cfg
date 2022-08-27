@@ -1,0 +1,29 @@
+#!/bin/bash
+#
+# Batch Cleanup Maintenance Command
+#
+# Deletes extraneous post revisions
+# and deletes spam comments
+#
+
+for path in $(cat /usr/local/sitelist.md)
+do
+  if test -e $path/wp-config.php; then
+    cd $path/html
+    site=$(basename $path)
+    echo $site
+
+    # Delete inactive plugins
+    wp plugin delete $(wp plugin list --status=inactive --field=name)
+    wp plugin install akismet jetpack vaultpress wp-super-cache
+  
+    # Keep last 5 post revisions and delete the rest
+    wp revisions clean 5
+
+    # Delete spam comments
+    wp comment delete $(wp comment list --status=spam --format=ids)
+
+    echo
+  fi
+done
+

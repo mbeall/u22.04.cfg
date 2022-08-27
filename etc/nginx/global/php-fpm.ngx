@@ -1,0 +1,14 @@
+# Pass all .php files onto a php-fpm/php-fcgi server.
+location ~ [^/]\.php(/|$) {
+  fastcgi_split_path_info ^(.+?\.php)(/.*)$;
+
+  # This is a robust solution for path info security issue and works with "cgi.fix_pathinfo = 1" in /etc/php.ini (default)
+  if (!-f $document_root$fastcgi_script_name) {
+    return 404;
+  }
+
+  include snippets/fastcgi-php.conf;
+  fastcgi_pass unix:/var/run/php/php-fpm.sock;
+
+  fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+}

@@ -1,0 +1,25 @@
+#!/bin/bash
+#
+# Evaluate command on all WordPress sites
+#
+
+if [ -z $1 ]
+then
+  echo 'Usage: wpg "<cmd(s)>"'
+  exit 1
+else
+  for user in $(ls /home)
+  do
+    for site in $(ls /home/$user/public)
+    do
+      if [ -e /home/$user/public/$site/wp-config.php ]; then
+        cd /home/$user/public/$site/html
+        echo $site
+        wp $*
+        cd
+        echo
+      fi
+    done
+  done
+fi
+

@@ -1,0 +1,43 @@
+#!/bin/bash
+# Backup all sites
+#
+
+for path in $(cat /usr/local/backup-sites)
+do
+
+  bk_date=$(date +%Y-%m)
+  site=$(basename $(dirname "$path/html"))
+  file=$(echo $bk_date\-$site) 
+  user=$(stat -c '%U' $path)
+  
+  cd $path
+  echo "Archiving $site..."
+  tar -zcf backup/$file.tgz html
+
+  if test -e $path/backup/$file.tgz; then
+    echo "├── Media archived."
+    chown $user:$user $path/backup/$file.tgz
+  else
+    echo "***MEDIA ARCHIVE FAILED***"
+    exit 1
+  fi
+
+  if [ -e $path/wp-config.php ]; then
+    cd $path/html
+    wp db export ../backup/$file.sql --set-gtid-purged=OFF --allow-root >> /dev/null
+
+    if test -e $path/backup/$file.sql; then
+      echo "├── Database archived."
+      chown $user:$user $path/backup/$file.tgz
+    else
+      echo "***DATABASE ARCHIVE FAILED***"
+      exit 1
+    fi
+  fi
+
+  echo "└── $site archived successfully!"
+
+  echo
+
+done
+

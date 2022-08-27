@@ -1,0 +1,28 @@
+#!/bin/bash
+# Get permissions in check
+
+for user in $(ls /home)
+do
+  chown -R $user:$user /home/$user/*
+  echo "User [$user]: Ownership reset."
+
+  chmod 770 /home/$user/private
+  #find /home/$user/private -type d -print0 | xargs -0 chmod 770
+  #find /home/$user/private -type f -print0 | xargs -0 chmod 660
+  chmod 775 /home/$user/public
+
+  for site in $(ls /home/$user/public)
+  do
+    chgrp -R www-data /home/$user/public/$site
+    echo "Site [$site]: Group ownership reset."
+    find /home/$user/public/$site -type d -print0 | xargs -0 chmod 775
+    find /home/$user/public/$site -type f -print0 | xargs -0 chmod 664
+    echo "Site [$site]: Directory and file permissions reset."
+    if [ -e /home/$user/public/$site/wp-config.php ]; then
+      chmod 660 /home/$user/public/$site/wp-config.php
+      echo "Site [$site]: WordPress Configuration permissions reset."
+    fi
+    echo
+  done
+done
+

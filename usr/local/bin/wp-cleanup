@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+# Cleanup Maintenance Command
+#
+# Deletes extraneous post revisions
+# and deletes spam comments
+#
+
+# Delete inactive plugins
+wp plugin delete $(wp plugin list --status=inactive --field=name)
+wp plugin install akismet jetpack wp-super-cache
+
+# Delete inactive themes
+wp theme delete $(wp theme list --status=inactive --field=name)
+wp theme install twentytwentyone
+
+# Keep last 5 post revisions and delete the rest
+wp revisions clean 5
+
+# Delete spam comments
+wp comment delete $(wp comment list --status=spam --format=ids)
+

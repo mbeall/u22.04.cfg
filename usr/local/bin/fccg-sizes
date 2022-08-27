@@ -1,0 +1,9 @@
+#!/bin/bash
+# Get size of all sites
+#
+
+for site in $(cat /usr/local/fcc-sites)
+do
+  sudo du -sh $site
+done
+

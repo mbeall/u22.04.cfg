@@ -1,0 +1,13 @@
+#!/bin/bash
+# Configure permissions for a site
+
+site_path=$(echo $1)
+
+chgrp -R www-data $site_path
+find $site_path -type d -print0 | xargs -0 chmod 775
+find $site_path -type f -print0 | xargs -0 chmod 664
+
+if [ -e $site_path/wp-config.php ]; then
+  chmod 660 $site_path/wp-config.php
+fi
+

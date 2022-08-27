@@ -1,0 +1,19 @@
+#!/bin/bash
+#
+# Send out emails with information about available updates for all WordPress sites
+#
+
+for user in $(ls /home)
+do
+  for site in $(ls /home/$user/public)
+  do
+    if [ -e /home/$user/public/$site/wp-config.php ]
+    then
+      cd /home/$user/public/$site/html
+
+      # Email plugin and theme statuses
+      echo -e "Plugins: \n $(wp plugin update --all --dry-run --url="https://$site") \n \n Themes: \n $(wp theme update --all --dry-run --url="https://$site") \n \n Go to https://$site/wp-admin/update-core.php to update" | mail -s "$site Available Updates" mbeall@starverte.com
+    fi
+  done
+done
+

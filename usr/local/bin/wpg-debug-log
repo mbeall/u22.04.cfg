@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+# Batch Email Debug Logs
+#
+
+for path in $(cat /usr/local/sitelist.md)
+do
+  if test -e $path/wp-config.php; then
+    cd $path/html/wp-content
+    site=$(basename $path)
+
+    # Email plugin and theme statuses
+    tail debug.log | mail -s "[debug.log] $site" mbeall@starverte.com
+  fi
+done
+
